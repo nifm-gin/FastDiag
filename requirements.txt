@@ -1,0 +1,8 @@
+pandas==2.3.0
+scikit-learn==1.5.2
+imbalanced-learn==0.12.4
+seaborn==0.13.2
+shap==0.48.0
+tqdm==4.67.1
+matplotlib==3.9.4
+notebook==7.3.3
