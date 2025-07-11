@@ -1,0 +1,6 @@
+data/shanoir_import_full.csv
+data/cleaned_data_full.csv
+data/segmentation_data_anonymized.csv
+data/clinical_data_anonymized.csv
+FastDiag_models.err
+FastDiag_models.out
