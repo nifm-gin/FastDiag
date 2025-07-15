@@ -103,7 +103,7 @@ def get_all_prehospital_and_segmentation(with_name=True):
 
 
 def get_all_DCA(with_name=True):
-    """Load, preprocess and return the 14 features obtained from the DCA (Déchocage or emergency trauma room)"""
+    """Load, preprocess and return the 14 features obtained from the DCA (Déchocage or resuscitation room)"""
     
     data_full = pd.read_csv(DATA_DIRECTORY+"final_database_clinical_segmentation.csv")
     X_dca = data_full.iloc[:, 35:49]
@@ -132,9 +132,3 @@ def get_all_DCA_and_segmentation(with_name=True):
 
     return X_dca_segmentation
 
-if __name__ == "__main__":
-    # Example usage
-    features = get_all_DCA_and_segmentation(with_name=True)
-    print(features.head())
-    print(features.columns.values)
-    

@@ -4,6 +4,13 @@ import numpy as np
 DATA_DIRECTORY = "data/"
 
 def get_gose_30d():
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the Glasgow Outcome Scale Extended (GOSE) at 30 days.
+    GOSE of 6 or more is considered a negative outcome (0), 
+    while GOSE of 5 or less is considered a positive outcome (1).
+    """
+
     columns_to_load = [96, 1]
 
     gose_30d = pd.read_csv(DATA_DIRECTORY + "clinical_data_anonymized.csv", usecols=columns_to_load)
@@ -19,10 +26,8 @@ def get_gose_30d():
     # Drop rows with NaN in 'name'
     gose_30d = gose_30d.dropna(subset=['name'])
 
-
     data = gose_30d.copy()
 
-    # Création de la colonne 'gose'
     data['mortality'] = data['mortality'].apply(
         lambda x: 0 if x in ['8 Upper Good Recovery (Upper GR)', 
                             '7 Lower Good Recovery (Lower GR)', 
@@ -33,12 +38,10 @@ def get_gose_30d():
     ).astype(float)
 
 
-    # Compter le nombre de 1, de 0 et de NaN dans la colonne 'mortality'
     count_1 = (data['mortality'] == 1).sum()  # Nombre de 1
     count_0 = (data['mortality'] == 0).sum()  # Nombre de 0
     count_nan = data['mortality'].isna().sum()  # Nombre de NaN
 
-    # Afficher les résultats
     print(f"Nombre de 1 : {count_1}")
     print(f"Nombre de 0 : {count_0}")
     print(f"Nombre de NaN : {count_nan}")
@@ -59,6 +62,12 @@ def get_gose_30d():
     return y
 
 def get_gose_6m():
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the Glasgow Outcome Scale Extended (GOSE) at 6 months.
+    GOSE of 6 or more is considered a negative outcome (0), 
+    while GOSE of 5 or less is considered a positive outcome (1).
+    """
     columns_to_load = [97, 1]
 
     gose_6m = pd.read_csv(DATA_DIRECTORY + "clinical_data_anonymized.csv", usecols=columns_to_load)
@@ -77,7 +86,6 @@ def get_gose_6m():
 
     data = gose_6m.copy()
 
-    # Création de la colonne 'gose'
     data['mortality'] = data['mortality'].apply(
         lambda x: 0 if x in ['8 Upper Good Recovery (Upper GR)', 
                             '7 Lower Good Recovery (Lower GR)', 
@@ -88,7 +96,6 @@ def get_gose_6m():
     ).astype(float)
 
 
-    # Compter le nombre de 1, de 0 et de NaN dans la colonne 'mortality'
     count_1 = (data['mortality'] == 1).sum()  # Nombre de 1
     count_0 = (data['mortality'] == 0).sum()  # Nombre de 0
     count_nan = data['mortality'].isna().sum()  # Nombre de NaN
@@ -115,7 +122,12 @@ def get_gose_6m():
 
 
 def get_mortality_7d():
-    
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the mortality at 7 days.
+    Patient alive at 7 days is considered a negative outcome (0), 
+    Positive outcome otherwise (1).
+    """
     columns_to_load = [93, 1] 
 
     mortality_7d = pd.read_csv(DATA_DIRECTORY + "clinical_data_anonymized.csv", usecols=columns_to_load)
@@ -158,7 +170,12 @@ def get_mortality_7d():
     return y
 
 def get_mortality_30d():
-    
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the mortality at 30 days.
+    Patient alive at 30 days is considered a negative outcome (0), 
+    Positive outcome otherwise (1).
+    """
     columns_to_load = [93, 94, 1] 
 
     mortality_7d = pd.read_csv(DATA_DIRECTORY + "clinical_data_anonymized.csv", usecols=columns_to_load)
@@ -206,7 +223,12 @@ def get_mortality_30d():
     
 
 def get_mortality_6m():
-
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the mortality at 6 months.
+    Patient alive at 6 months is considered a negative outcome (0), 
+    Positive outcome otherwise (1).
+    """
     columns_to_load = [93, 94, 95, 1] 
 
     mortality_7d = pd.read_csv(DATA_DIRECTORY + "clinical_data_anonymized.csv", usecols=columns_to_load)
@@ -257,6 +279,10 @@ def get_mortality_6m():
 
 
 def get_tier():
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for the TIER scale.
+    """
     # Load the columns 71 to 75 and the 6th column
     columns_to_load = list(range(58, 69)) + [1]
 
@@ -290,6 +316,12 @@ def get_tier():
     return y
 
 def get_til():
+    """
+    This function reads the raw clinical data csv file and computes 
+    a binary outcome for Therapeutic Intensity Level (TIL).
+    A TIL of 0 or 1 is considered a negative outcome (0), 
+    A TIL of 2, 3 or 4 is considered a positive outcome (1).
+    """
     # Load the columns 71 to 75 and the 6th column
     columns_to_load = list(range(69, 74)) + [1]
 

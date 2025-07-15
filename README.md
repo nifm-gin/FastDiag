@@ -18,5 +18,5 @@
 - `compute_models.py` is the main file which processes the data, runs hyperparameter search and returns metrics with confidence intervals for each model.
 - `data/` contains the unprocessed anonymized database with all clinical variables and CT scan segmentation volumes for each patient as well as the outcomes
 - `old drafts/` contains old exploratory studies in notebook format
-- `results_summary/` contains the output csv files with scores and 95% confidence intervals
+- `results_summary/` contains the output csv files with performace metrics and 95% confidence intervals
 - `utility/` contains tools

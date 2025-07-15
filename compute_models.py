@@ -51,28 +51,25 @@ def align_X_y_and_clean(X,y):
     print(f"Shape of y after cleaning: {y.shape}")
     print(f"Shape of X after cleaning: {X.shape}")
 
-    # Vérifiez les valeurs uniques de 'name' dans y
+    # Number of unique values of "name" in y
     print("Unique 'name' values in y:", y['name'].nunique())
 
-    # Vérifiez les valeurs uniques de 'name' dans X
+    # Number of unique values of "name" in X
     print("Unique 'name' values in X:", X['name'].nunique())
 
-    # Noms dans y mais pas dans X
     missing_in_X = set(y['name']) - set(X['name'])
     print(f"Names in y but not in X: {missing_in_X}")
 
-    # Noms dans X mais pas dans y
     missing_in_y = set(X['name']) - set(y['name'])
     print(f"Names in X but not in y: {missing_in_y}")
 
-    # Trouver les noms communs
+    # Find rows with names that are common to both y and X
     common_names = set(y['name']).intersection(set(X['name']))
 
-    # Filtrer y et X pour ne garder que les noms communs
+    # Keep only rows where the name is both in X and y
     y = y[y['name'].isin(common_names)]
     X = X[X['name'].isin(common_names)]
 
-    # Vérifiez les dimensions après nettoyage
     print(f"Shape of y after alignment: {y.shape}")
     print(f"Shape of X after alignment: {X.shape}")
 
@@ -94,11 +91,11 @@ def align_X_y_and_clean(X,y):
     common_names = set(y['name']) == set(X['name'])
     print(f"Are 'name' values aligned between y and X {common_names}")
 
-    # Trier y et X par la colonne 'name'
+    # Sort y and X by 'name'
     y = y.sort_values(by='name').reset_index(drop=True)
     X = X.sort_values(by='name').reset_index(drop=True)
 
-    # Vérifier si les noms sont alignés
+    # Verify that the names are aligned
     print((y['name'].values == X['name'].values).all())
 
     # Drop the 'name' column from X
@@ -118,7 +115,10 @@ def align_X_y_and_clean(X,y):
 
 def compute_model(feature_set, outcome):
     """
-    Compute the model for mortality at 6 months.
+    Trains a model for a given feature set and outcome.
+    Performs hyperparameter tuning using grid search with nested cross-validation.
+    Returns a dictionnary with the best hyperparameter combination and the 
+    performance metrics along with their 95% confidence intervals.
     """
 
     # get outcome ground truth
@@ -137,7 +137,7 @@ def compute_model(feature_set, outcome):
     elif outcome == "TIL":
         y = get_tier()
 
-    # get features
+    # get input features
     if feature_set == "traumatrix":
         X = get_traumatrix(with_name=True)
 
@@ -161,29 +161,25 @@ def compute_model(feature_set, outcome):
 
     # align, clean and imputation 
     X, y = align_X_y_and_clean(X, y)
-    nb_total_samples = len(y)
 
     # model pipeline (minority class oversampling + majority class undersampling + model)
     pipeline_smote_under = Pipeline(steps=[('over', SMOTE()), ('under', RandomUnderSampler(sampling_strategy=0.5)), ('model', HistGradientBoostingClassifier())])
-    #pipeline_smote_under = Pipeline(steps=[('over', SMOTENC(categorical_features=["fracas_du_bassin", "amputation"])), ('under', RandomUnderSampler(sampling_strategy=0.5)), ('model', HistGradientBoostingClassifier())])
-
-
+    
     inner_cv = RepeatedStratifiedKFold(n_splits=FOLDS, n_repeats=5, random_state=1)
 
 
     # hyperparameter grid search
-    ftwo_scorer = make_scorer(fbeta_score, beta=2)
+    ftwo_scorer = make_scorer(fbeta_score, beta=2) # the search is optimized for F2 score
+    # parameter grid
     p_grid = {"model__learning_rate": [0.01, 0.05, 0.08, 0.1, 0.2, 0.3, 0.5, 1], "over__sampling_strategy": [0.1, 0.2, 0.3], "over__k_neighbors":[3,5,8], "under__sampling_strategy":[0.3, 0.5, 0.7]}
     clf = GridSearchCV(estimator=pipeline_smote_under, param_grid=p_grid, scoring={'F2':ftwo_scorer}, refit='F2', cv=inner_cv)
 
     outer_cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=42)
 
-
     nested_scores_smote_undersampling = cross_validate(clf, X, y, 
                                                     scoring={'F2':ftwo_scorer, 'ROC_AUC':'roc_auc', 'Recall':'recall_macro', 'F1':'f1', 'Brier':"neg_brier_score", 'False_neg_scorer':false_neg_scorer, 'False_pos_scorer':false_pos_scorer}, 
                                                     cv=outer_cv, n_jobs=-1, return_estimator=True, return_indices=True)
 
-    #print("HistGradientBoostingClassifier with hyperparameter gridsearch")
 
     # once the best hyperparameters are found, we can extract them and train the final model
     best_params_list = []
@@ -193,9 +189,10 @@ def compute_model(feature_set, outcome):
 
     # Convert dict to a hashable tuple and count occurrences
     most_common_params = Counter(best_params_list).most_common(1)[0][0]
+    # final params hold the most common occurence of a hyperparameter combination
     final_params = dict(most_common_params)  # Convert back to dict
     
-
+    # The final model can then be trained
     print("Final chosen hyperparameters:", final_params)
     pipeline = Pipeline(steps=[
     ('over', SMOTE(k_neighbors=final_params["over__k_neighbors"], sampling_strategy=final_params["over__sampling_strategy"])), 
@@ -213,7 +210,6 @@ def compute_model(feature_set, outcome):
     y_pred = np.asarray(y_pred)
     y_pred_binary = np.asarray(y_pred_binary)
     y = np.asarray(y)
-    X_dropped = np.asarray(X)
 
     test_roc_auc = []
     test_f1 = []
@@ -233,7 +229,8 @@ def compute_model(feature_set, outcome):
     test_fn = []
     test_tp = []
 
-    for i in range(200): # bootstrap with 200 rounds: random sampling with replacement of the predictions
+    for i in range(200): 
+        # bootstrap with 200 rounds: random sampling with replacement of the predictions
 
         pred_idx = rng.choice(idx, size=len(idx), replace=True)
         
@@ -279,6 +276,8 @@ def compute_model(feature_set, outcome):
     print("Classification performance\n")
     output = {"Feature set": feature_set, "Outcome": outcome}
 
+    # Compute the mean and 95% confidence intervals for each metric
+    # 95% confidence intervals are computed using the 2.5th and 97.5th percentiles of the bootstrap samples
     bootstrap_roc_auc_test_mean = np.mean(test_roc_auc)
     ci_lower = np.percentile(test_roc_auc, 2.5)     # 2.5 percentile (alpha=0.025)
     ci_upper = np.percentile(test_roc_auc, 97.5)
