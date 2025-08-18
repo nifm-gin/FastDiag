@@ -23,9 +23,12 @@ DATA_DIRECTORY = "data/"
 OUTCOMES = ["mortality_6m", "mortality_30d", "mortality_7d",
             "gose_6m", "gose_30d", "TIER", "TIL"]
 
-FEATURES = ["traumatrix", "segmentation", "traumatrix_and_segmentation",
+FEATURES_old = ["traumatrix", "segmentation", "traumatrix_and_segmentation", # old naming convention for features
             "all_prehospital", "all_prehospital_and_segmentation", "all_DCA",
             "all_DCA_and_segmentation"]
+
+FEATURES = ["PREHOSP", "CT-TIQUA", "MULTI", 
+            "PREHOSP-X", "MULTI-PRE", "RESUS-X", "MULTI-RESUS"]
 
 def compute_shap(outcome, feature_set, hyperparams):
     # get outcome ground truth
@@ -45,25 +48,25 @@ def compute_shap(outcome, feature_set, hyperparams):
         y = get_tier()
 
     # get input features
-    if feature_set == "traumatrix":
+    if feature_set == "PREHOSP":
         X = get_traumatrix(with_name=True)
 
-    elif feature_set == "segmentation":
+    elif feature_set == "CT-TIQUA":
         X = get_segmentation(with_name=True)
 
-    elif feature_set == "traumatrix_and_segmentation":
+    elif feature_set == "MULTI":
         X = get_traumatrix_and_segmentation(with_name=True)
 
-    elif feature_set == "all_prehospital":
+    elif feature_set == "PREHOSP-X":
         X = get_all_prehospital(with_name=True)
 
-    elif feature_set == "all_prehospital_and_segmentation":
+    elif feature_set == "MULTI-PRE":
         X = get_all_prehospital_and_segmentation(with_name=True)
 
-    elif feature_set == "all_DCA":
+    elif feature_set == "RESUS-X":
         X = get_all_DCA(with_name=True)
 
-    elif feature_set == "all_DCA_and_segmentation":
+    elif feature_set == "MULTI-RESUS":
         X = get_all_DCA_and_segmentation(with_name=True)
 
     # align, clean and imputation 
@@ -112,7 +115,7 @@ def compute_shap(outcome, feature_set, hyperparams):
                 #plt.figure(figsize=(20, 5))
                 plt.title(f"{type} SHAP values for {outcome} outcome and {feature_set} data.")
                 shap.plots.waterfall(shap_values[index], show=False)
-                plt.savefig(f"shap_charts/shap_{outcome}_{feature_set}_{type}.png", dpi=300, bbox_inches='tight')
+                plt.savefig(f"SHAP_plots/shap_{outcome}_{feature_set}_{type}.png", dpi=300, bbox_inches='tight')
                 plt.clf()
                 # so we can exit this loop and go for the next type inside (FN, FP, TN, TP) 
                 break
@@ -120,8 +123,8 @@ def compute_shap(outcome, feature_set, hyperparams):
 
 if __name__ == "__main__":
     for outcome in OUTCOMES:
-        for feature in FEATURES:
-            df = pd.read_csv(f"results_summary/results_{feature}_{outcome}.csv")
+        for i, feature in enumerate(FEATURES):
+            df = pd.read_csv(f"results_summary/results_{FEATURES_old[i]}_{outcome}.csv")
             hyperparams = {"model__learning_rate": df["model__learning_rate"].iloc[0],
                            "under__sampling_strategy": df["under__sampling_strategy"].iloc[0],
                            "over__sampling_strategy": df["over__sampling_strategy"].iloc[0],
