@@ -5,7 +5,7 @@
 
 ---
 ### Summary
-
+This is the codebase for the development of 49 prediction models for seven outcomes and seven feature sets across the neurotrauma patient pathway.
 
 ### Setup
 - Use python version 3.9+
