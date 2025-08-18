@@ -16,7 +16,9 @@
 
 ### Structure of the project
 - `compute_models.py` is the main file which processes the data, runs hyperparameter search and returns metrics with confidence intervals for each model.
+- `SHAP_plots/` contains  SHAPley values explanation plots for four test inference example (TP, TN, FP, FN) per model.
+- `results_summary/` contains the output csv files with performance metrics and 95% confidence intervals.
 - `data/` contains the unprocessed anonymized database with all clinical variables and CT scan segmentation volumes for each patient as well as the outcomes.
 - `old drafts/` contains old exploratory studies in notebook format.
-- `results_summary/` contains the output csv files with performance metrics and 95% confidence intervals.
+- 
 - `utility/` contains tool scripts.
