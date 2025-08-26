@@ -6,3 +6,12 @@ FastDiag_models.err
 FastDiag_models.out
 shap_charts/
 data/
+*.sh
+compute_shap_charts_1.py
+compute_shap_charts_2.py
+compute_shap_charts_3.py
+compute_shap_charts_4.py
+compute_shap_charts_5.py
+compute_shap_charts_6.py
+*.err
+*.out

@@ -115,7 +115,7 @@ def compute_shap(outcome, feature_set, hyperparams):
                 #plt.figure(figsize=(20, 5))
                 plt.title(f"{type} SHAP values for {outcome} outcome and {feature_set} data.")
                 shap.plots.waterfall(shap_values[index], show=False)
-                plt.savefig(f"SHAP_plots/shap_{outcome}_{feature_set}_{type}.png", dpi=300, bbox_inches='tight')
+                plt.savefig(f"SHAP_plots/individual/shap_{outcome}_{feature_set}_{type}.png", dpi=300, bbox_inches='tight')
                 plt.clf()
                 # so we can exit this loop and go for the next type inside (FN, FP, TN, TP) 
                 break

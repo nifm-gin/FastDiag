@@ -124,3 +124,40 @@ def align_X_y_and_clean(X,y):
     # Ensure y_outcome is a 1D array
     y_outcome = y_outcome.values.ravel()  # Convert to 1D if using pandas DataFrame
     return X_features_imputed, y_outcome
+
+def translate_column_names(df):
+    translation_dict = {
+         "hemocue_initial": "hemocue_initial",
+          "fracas_du_bassin": "pelvic_fracture",	
+          "catecholamines": "catecholamines",
+          "pression_arterielle_systolique_PAS_arrivee_du_smur": "arterial_systolic_blood_pressure_ASBP_arrival_of_smur",
+          "pression_arterielle_diastolique_PAD_arrivee_du_smur": "arterial_diastolic_blood_pressure_ADBP_arrival_of_smur",
+          "score_glasgow_initial": "initial_glasgow_score",
+          "score_glasgow_moteur_initial": "initial_motor_glasgow_score",
+          "anomalie_pupillaire_prehospitalier": "prehospital_pupillary_abnormality",
+          "frequence_cardiaque_FC_arrivee_du_smur": "heart_rate_HR_arrival_of_smur",
+          "arret_cardio_respiratoire_massage": "cardiopulmonary_arrest_CPR",
+          "penetrant_objet": "penetrating_object",
+          "ischemie_du_membre": "limb_ischemia",
+          "hemorragie_externe": "external_hemorrhage",
+          "amputation": "amputation",
+          "outcome_neurochir_pic": "outcome_neurosurgery_ipc",
+          "Expansion volémique": "volumetric_expansion",
+          "OsmoTH prehosp": "OsmoTH_pre_hospital",
+          "Vasopresseur prehosp": "Vasopressor_pre_hospital",
+          "Dextro DCA (mmol/l)": "Dextro_Resus_(mmol/l)",
+          "PAS DCA": "arterial_systolic_blood_pressure_ASBP_Resus",
+          "PAD DCA": "arterial_diastolic_blood_pressure_ADBP_Resus",
+          "FC DCA": "heart_rate_HR_Resus",
+          "Shock index DCA": "Shock_index_Resus",
+          "Shock Index inversé.1": "Shock_Index_inverted_1",
+          "Shock index diastolique.1": "Shock_index_diastolic_1",
+          "GCS DCA": "GCS_Resus",
+          "GCS (M) DCA": "GCS_M_Resus",
+          "Température DCA": "Temperature_Resus",
+          "Hémocue DCA": "Hemocue_Resus",
+
+    }
+
+    df = df.rename(columns=translation_dict)
+    return df
