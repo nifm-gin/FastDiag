@@ -177,29 +177,41 @@ def compute_shap_conservative(outcome, feature_set):
                 shap_values_fp = explainer(X_fp)
                 shap_values_fn = explainer(X_fn)
 
-                plt.title(f"SHAP values true positive for {outcome} outcome and {feature_set} data.")
-                shap.plots.beeswarm(shap_values_tp, max_display=20, show=False)
+                try:
+                    plt.title(f"SHAP values true positive for {outcome} outcome and {feature_set} data.")
+                    shap.plots.beeswarm(shap_values_tp, max_display=20, show=False)
+                
+                    plt.savefig(f"SHAP_plots/all_by_type/shap_true_positive_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
+                    plt.clf()
+                except:
+                    print("No true positives to plot for this fold.")
 
-                plt.savefig(f"SHAP_plots/all_by_type/shap_true_positive_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
-                plt.clf()
+                try:
+                    plt.title(f"SHAP values true negative for {outcome} outcome and {feature_set} data.")
+                    shap.plots.beeswarm(shap_values_tn, max_display=20, show=False)
 
-                plt.title(f"SHAP values true negative for {outcome} outcome and {feature_set} data.")
-                shap.plots.beeswarm(shap_values_tn, max_display=20, show=False)
+                    plt.savefig(f"SHAP_plots/all_by_type/shap_true_negative_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
+                    plt.clf()
+                except:
+                    print("No true negatives to plot for this fold.")
 
-                plt.savefig(f"SHAP_plots/all_by_type/shap_true_negative_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
-                plt.clf()
+                try:
+                    plt.title(f"SHAP values false positive for {outcome} outcome and {feature_set} data.")
+                    shap.plots.beeswarm(shap_values_fp, max_display=20, show=False)
 
-                plt.title(f"SHAP values false positive for {outcome} outcome and {feature_set} data.")
-                shap.plots.beeswarm(shap_values_fp, max_display=20, show=False)
+                    plt.savefig(f"SHAP_plots/all_by_type/shap_false_positive_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
+                    plt.clf()
+                except:
+                    print("No false positives to plot for this fold.")
 
-                plt.savefig(f"SHAP_plots/all_by_type/shap_false_positive_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
-                plt.clf()
+                try:
+                    plt.title(f"SHAP values false negative for {outcome} outcome and {feature_set} data.")
+                    shap.plots.beeswarm(shap_values_fn, max_display=20, show=False)
 
-                plt.title(f"SHAP values false negative for {outcome} outcome and {feature_set} data.")
-                shap.plots.beeswarm(shap_values_fn, max_display=20, show=False)
-
-                plt.savefig(f"SHAP_plots/all_by_type/shap_false_negative_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
-                plt.clf()
+                    plt.savefig(f"SHAP_plots/all_by_type/shap_false_negative_{outcome}_{feature_set}.png", dpi=300, bbox_inches='tight')
+                    plt.clf()
+                except:
+                    print("No false negatives to plot for this fold.")
 
             break
         
